@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: 
+Class-Path: eclipselink-2.7.6.jar postgresql-42.2.5.jar commonj.sdo-2.1.
+ 1.jar jakarta.persistence-2.2.3.jar
+

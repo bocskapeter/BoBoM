@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    <persistence-unit name="bobom" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>eu.bopet.bobom.core.entities.Boms</class>
+        <class>eu.bopet.bobom.core.entities.Categories</class>
+        <class>eu.bopet.bobom.core.entities.names.CategoryGroupNames</class>
+        <class>eu.bopet.bobom.core.entities.CategoryGroups</class>
+        <class>eu.bopet.bobom.core.entities.names.CategoryNames</class>
+        <class>eu.bopet.bobom.core.entities.CategoryParameters</class>
+        <class>eu.bopet.bobom.core.entities.ItemCategories</class>
+        <class>eu.bopet.bobom.core.entities.ItemMaterials</class>
+        <class>eu.bopet.bobom.core.entities.names.ItemNames</class>
+        <class>eu.bopet.bobom.core.entities.Items</class>
+        <class>eu.bopet.bobom.core.entities.ItemStandards</class>
+        <class>eu.bopet.bobom.core.entities.names.MaterialNames</class>
+        <class>eu.bopet.bobom.core.entities.Materials</class>
+        <class>eu.bopet.bobom.core.entities.MaterialParameters</class>
+        <class>eu.bopet.bobom.core.entities.MaterialStandards</class>
+        <class>eu.bopet.bobom.core.entities.names.ParameterNames</class>
+        <class>eu.bopet.bobom.core.entities.Parameters</class>
+        <class>eu.bopet.bobom.core.entities.ParameterSymbols</class>
+        <class>eu.bopet.bobom.core.entities.ParameterValues</class>
+        <class>eu.bopet.bobom.core.entities.Quantities</class>
+        <class>eu.bopet.bobom.core.entities.names.QuantityNames</class>
+        <class>eu.bopet.bobom.core.entities.names.StandardNames</class>
+        <class>eu.bopet.bobom.core.entities.Standards</class>
+        <class>eu.bopet.bobom.core.entities.UnitConvertValues</class>
+        <class>eu.bopet.bobom.core.entities.names.UnitNames</class>
+        <class>eu.bopet.bobom.core.entities.names.UnitSymbols</class>
+        <class>eu.bopet.bobom.core.entities.Units</class>
+        <class>eu.bopet.bobom.core.entities.Users</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.2.102:5432/bobom"/>
+            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/bobom"/>-->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="postgres"/>
+        </properties>
+    </persistence-unit>
+</persistence>
