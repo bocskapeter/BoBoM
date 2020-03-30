@@ -40,18 +40,18 @@ public class BoMManager {
                     return new BoMMessage(BoMActivity.SAVED,message.getTheClass(),message.getUser(),result);
                 } catch (BoMLoopException e) {
                     logger.warning(message.getUser().toString() + e.getMessage());
-                    return new BoMMessage(BoMActivity.ERROR,null,null,Arrays.asList(new BoMMessage[]{message}));
+                    return new BoMMessage(BoMActivity.ERROR,null,null,Arrays.asList(message));
                 }
             }
             case DELETE:{
                 if(delete((DBEntities) message.getList().get(0),message.getUser())){
                     return new BoMMessage(BoMActivity.DELETED,message.getTheClass(),message.getUser(),null);
                 } else {
-                    return new BoMMessage(BoMActivity.ERROR,null,null,Arrays.asList(new BoMMessage[]{message}));
+                    return new BoMMessage(BoMActivity.ERROR,null,null,Arrays.asList(message));
                 }
             }
         }
-        return new BoMMessage(BoMActivity.ERROR,null,null, Arrays.asList(new BoMMessage[]{message}));
+        return new BoMMessage(BoMActivity.ERROR,null,null, Arrays.asList(message));
     }
 
     private Users getUserByEMail(String eMail) {

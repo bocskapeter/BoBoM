@@ -23,14 +23,14 @@ import java.util.logging.Logger;
         decoders = MessageDecoder.class,
         value = "/engineering/{eMail}")
 public class EngineeringServerEndpoint {
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @OnOpen
     public void onOpen(@PathParam("eMail") String eMail, Session session, EndpointConfig config) {
         logger.info("Connected ... " + session.getId());
         logger.warning("config: " + config.toString());
         try{
-            BoMMessage message = new BoMMessage(BoMActivity.LOGIN,Users.class,null, Arrays.asList(new String[]{eMail}));
+            BoMMessage message = new BoMMessage(BoMActivity.LOGIN,Users.class,null, Arrays.asList(eMail));
             BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
             Users user = reply.getUser();
             if (user!= null){
@@ -46,8 +46,8 @@ public class EngineeringServerEndpoint {
 
     @OnMessage
     public void onMessage(Session session, BoMMessage message){
-        BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
         try {
+            BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
             session.getBasicRemote().sendObject(reply);
         } catch (IOException | EncodeException e) {
             logger.info(e.getMessage());
