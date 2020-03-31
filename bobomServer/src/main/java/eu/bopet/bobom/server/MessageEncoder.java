@@ -2,16 +2,16 @@ package eu.bopet.bobom.server;
 
 import eu.bopet.bobom.core.BoMMessage;
 
-import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Base64;
+import java.util.logging.Logger;
 
 public class MessageEncoder implements Encoder.Text<BoMMessage> {
-
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
     public void init(EndpointConfig endpointConfig) {
@@ -24,17 +24,17 @@ public class MessageEncoder implements Encoder.Text<BoMMessage> {
     }
 
     @Override
-    public String encode(BoMMessage message) throws EncodeException {
+    public String encode(BoMMessage message) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = null;
-            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
             objectOutputStream.writeObject(message);
             Base64.Encoder encoder = Base64.getEncoder();
-            return encoder.encodeToString(byteArrayOutputStream.toByteArray());
+            String result = encoder.encodeToString(byteArrayOutputStream.toByteArray());
+            return result;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning(e.getLocalizedMessage());
+            return "";
         }
-        return "";
     }
 }
