@@ -27,25 +27,24 @@ public class EngineeringServerEndpoint {
 
     @OnOpen
     public void onOpen(@PathParam("eMail") String eMail, Session session, EndpointConfig config) {
-        logger.info("Connected ... " + session.getId());
-        logger.warning("config: " + config.toString());
-        try{
-            BoMMessage message = new BoMMessage(BoMActivity.LOGIN,Users.class,null, Arrays.asList(eMail));
+        try {
+            BoMMessage message = new BoMMessage(BoMActivity.LOGIN, Users.class, null, Arrays.asList(eMail));
             BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
             Users user = reply.getUser();
-            if (user!= null){
-                session.getUserProperties().put("user",user);
+            if (user != null) {
+                logger.warning("With E-mail: " + eMail + " connected " + user.toString() + " under session: " + session.getId() + " config: " + config.toString());
+                session.getUserProperties().put("user", user);
                 session.getBasicRemote().sendObject(reply);
             }
-        } catch (Exception e){
-            logger.info(e.getMessage());
+        } catch (Exception e) {
+            logger.warning(e.getLocalizedMessage());
             e.printStackTrace();
         }
         ServerContext.getInstance().addSession(session);
     }
 
     @OnMessage
-    public void onMessage(Session session, BoMMessage message){
+    public void onMessage(Session session, BoMMessage message) {
         try {
             BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
             session.getBasicRemote().sendObject(reply);
