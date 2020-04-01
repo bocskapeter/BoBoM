@@ -26,11 +26,13 @@ public class MessageEncoder implements Encoder.Text<BoMMessage> {
     @Override
     public String encode(BoMMessage message) {
         try {
+            logger.warning("Message to encode: "+message.toString());
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
             objectOutputStream.writeObject(message);
             Base64.Encoder encoder = Base64.getEncoder();
             String result = encoder.encodeToString(byteArrayOutputStream.toByteArray());
+            logger.warning("Encoded string: " + result);
             return result;
         } catch (IOException e) {
             logger.warning(e.getLocalizedMessage());
