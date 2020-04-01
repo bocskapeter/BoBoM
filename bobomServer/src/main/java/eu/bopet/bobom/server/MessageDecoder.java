@@ -16,13 +16,11 @@ public class MessageDecoder implements Decoder.Text<BoMMessage> {
     @Override
     public BoMMessage decode(String s) {
         try {
-            logger.warning("String to decode: "+s);
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] data = decoder.decode(s);
             ByteArrayInputStream in = new ByteArrayInputStream(data);
             ObjectInputStream is = new ObjectInputStream(in);
             BoMMessage result = (BoMMessage) is.readObject();
-            logger.warning("Decoded message: " + result.toString());
             return result;
         } catch (IOException | ClassNotFoundException e) {
             logger.warning(e.getLocalizedMessage());
@@ -37,11 +35,9 @@ public class MessageDecoder implements Decoder.Text<BoMMessage> {
 
     @Override
     public void init(EndpointConfig endpointConfig) {
-
     }
 
     @Override
     public void destroy() {
-
     }
 }
