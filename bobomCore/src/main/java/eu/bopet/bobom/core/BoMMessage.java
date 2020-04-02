@@ -4,6 +4,7 @@ import eu.bopet.bobom.core.entities.Users;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class BoMMessage implements Serializable {
     private BoMActivity activity;
@@ -32,6 +33,22 @@ public class BoMMessage implements Serializable {
 
     public List getList() {
         return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoMMessage message = (BoMMessage) o;
+        return activity == message.activity &&
+                theClass.equals(message.theClass) &&
+                Objects.equals(user, message.user) &&
+                Objects.equals(list, message.list);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(activity, theClass, user, list);
     }
 
     @Override

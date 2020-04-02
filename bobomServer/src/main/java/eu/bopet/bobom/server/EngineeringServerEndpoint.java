@@ -1,8 +1,6 @@
 package eu.bopet.bobom.server;
 
-import eu.bopet.bobom.core.BoMActivity;
 import eu.bopet.bobom.core.BoMMessage;
-import eu.bopet.bobom.core.entities.Users;
 
 import javax.websocket.CloseReason;
 import javax.websocket.EncodeException;
@@ -12,34 +10,19 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 @ServerEndpoint(
         encoders = MessageEncoder.class,
         decoders = MessageDecoder.class,
-        value = "/engineering/{eMail}")
+        value = "/engineering")
 public class EngineeringServerEndpoint {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @OnOpen
-    public void onOpen(@PathParam("eMail") String eMail, Session session, EndpointConfig config) {
-        try {
-            BoMMessage message = new BoMMessage(BoMActivity.LOGIN, Users.class, null, Arrays.asList(eMail));
-            BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
-            Users user = reply.getUser();
-            if (user != null) {
-                logger.warning("With E-mail: " + eMail + " connected " + user.toString() + " under session: " + session.getId() + " config: " + config.toString());
-                session.getUserProperties().put("user", user);
-                session.getBasicRemote().sendObject(reply);
-            }
-        } catch (Exception e) {
-            logger.warning(e.getLocalizedMessage());
-            e.printStackTrace();
-        }
+    public void onOpen(Session session, EndpointConfig config) {
         ServerContext.getInstance().addSession(session);
     }
 
@@ -49,8 +32,9 @@ public class EngineeringServerEndpoint {
             BoMMessage reply = ServerContext.getInstance().getBoMManager().processMessage(message);
             session.getBasicRemote().sendObject(reply);
         } catch (IOException | EncodeException e) {
-            logger.info(e.getMessage());
-            e.printStackTrace();
+            logger.warning(session.toString());
+            logger.warning(message.toString());
+            logger.warning(e.getLocalizedMessage());
         }
     }
 
