@@ -23,6 +23,7 @@ public class EngineeringServerEndpoint {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
+        logger.warning(session.toString());
         ServerContext.getInstance().addSession(session);
     }
 
