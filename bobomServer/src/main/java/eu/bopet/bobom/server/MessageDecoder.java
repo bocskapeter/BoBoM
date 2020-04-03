@@ -30,7 +30,7 @@ public class MessageDecoder implements Decoder.Text<BoMMessage> {
 
     @Override
     public boolean willDecode(String s) {
-        return false;
+        return true;
     }
 
     @Override
