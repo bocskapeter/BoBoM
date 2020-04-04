@@ -64,7 +64,7 @@ public class BoMManagerTest {
     @Test
     public void testGetAll() {
         createBoMManager();
-        BoMMessage message = new BoMMessage(BoMActivity.READ, UnitSymbols.class, null, null);
+        BoMMessage message = new BoMMessage(BoMActivity.READ_ALL, UnitSymbols.class, null, null);
         BoMMessage reply = boMManager.processMessage(message);
         assert !reply.getList().isEmpty();
     }

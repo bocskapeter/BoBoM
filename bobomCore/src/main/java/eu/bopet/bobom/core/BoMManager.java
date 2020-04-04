@@ -28,30 +28,34 @@ public class BoMManager {
         switch (message.getActivity()) {
             case LOGIN: {
                 Users user = getUserByEMail((String) message.getList().get(0));
-                return new BoMMessage(BoMActivity.LOGIN,Users.class,user,null);
+                return new BoMMessage(BoMActivity.LOGIN, Users.class, user, null);
             }
-            case READ:{
+            case READ_ALL: {
                 List<DBEntities> result = getAll(message.getTheClass());
-                return new BoMMessage(BoMActivity.READ,message.getTheClass(),message.getUser(),result);
+                return new BoMMessage(BoMActivity.READ_ALL, message.getTheClass(), message.getUser(), result);
+            }
+            case READ: {
+                List<DBEntities> result = getByParameter(message.getTheClass(), message.getList());
+                return new BoMMessage(BoMActivity.READ, message.getTheClass(), message.getUser(), result);
             }
             case SAVE: {
                 try {
                     List<DBEntities> result = save(message.getList(), message.getUser());
-                    return new BoMMessage(BoMActivity.SAVED,message.getTheClass(),message.getUser(),result);
+                    return new BoMMessage(BoMActivity.SAVED, message.getTheClass(), message.getUser(), result);
                 } catch (BoMLoopException e) {
                     logger.warning(message.getUser().toString() + e.getMessage());
-                    return new BoMMessage(BoMActivity.ERROR,null,null,Arrays.asList(message));
+                    return new BoMMessage(BoMActivity.ERROR, null, null, Arrays.asList(message));
                 }
             }
-            case DELETE:{
-                if(delete((DBEntities) message.getList().get(0),message.getUser())){
-                    return new BoMMessage(BoMActivity.DELETED,message.getTheClass(),message.getUser(),null);
+            case DELETE: {
+                if (delete((DBEntities) message.getList().get(0), message.getUser())) {
+                    return new BoMMessage(BoMActivity.DELETED, message.getTheClass(), message.getUser(), null);
                 } else {
-                    return new BoMMessage(BoMActivity.ERROR,null,null,Arrays.asList(message));
+                    return new BoMMessage(BoMActivity.ERROR, null, null, Arrays.asList(message));
                 }
             }
         }
-        return new BoMMessage(BoMActivity.ERROR,null,null, Arrays.asList(message));
+        return new BoMMessage(BoMActivity.ERROR, null, null, Arrays.asList(message));
     }
 
     private Users getUserByEMail(String eMail) {
@@ -71,6 +75,17 @@ public class BoMManager {
             logger.warning(e.getMessage());
             return null;
         }
+    }
+
+    private <T> List<T> getByParameter(Class<T> entityClass, List list) {
+        List<T> result = new ArrayList<>();
+        switch (entityClass.getSimpleName()){
+            case "Boms": {
+                result = (List<T>) getBomAll((Items) list.get(0));
+            }
+        }
+        //TODO detail partial search results: search for String, where used...
+        return result;
     }
 
     private List<DBEntities> save(List<DBEntities> entities, Users user) throws BoMLoopException {
@@ -214,13 +229,28 @@ public class BoMManager {
         return false;
     }
 
+    private List<Boms> getBomAll(Items assembly){
+        List<Boms> result = getBom(assembly);
+        if(result.isEmpty()) {
+            return result;
+        } else {
+            for (Boms bomItem : result){
+                List<Boms> subBom = getBom(bomItem.getComponent());
+                if(!subBom.isEmpty()){
+                    result.addAll(subBom);
+                }
+            }
+        }
+        return result;
+    }
+
     private List<Boms> getBom(Items assembly) {
         List<Boms> result = new ArrayList<>();
         TypedQuery<Boms> tq = em.createNamedQuery("Boms.findByAssembly", Boms.class);
         try {
             result = tq.setParameter("assembly", assembly).getResultList();
         } catch (Exception e) {
-            logger.warning(assembly.toString() + " --> " + e.getMessage());
+            logger.info(assembly.toString() + " --> " + e.getMessage());
             return result;
         }
         return result;
