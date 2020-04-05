@@ -351,9 +351,11 @@ CREATE TABLE public.boms
     seq       integer NOT NULL,
     component uuid    NOT NULL,
     quantity  numeric NOT NULL,
+    unit      uuid    NOT NULL,
     CONSTRAINT boms_pkey PRIMARY KEY (id),
     CONSTRAINT bom_assembly_fkey FOREIGN KEY (assembly) REFERENCES public.items (id) ON UPDATE NO ACTION ON DELETE RESTRICT,
     CONSTRAINT bom_component_fkey FOREIGN KEY (component) REFERENCES public.items (id) ON UPDATE NO ACTION ON DELETE RESTRICT,
+    CONSTRAINT bom_unit_fkey FOREIGN KEY (unit) REFERENCES public.units (id) ON UPDATE NO ACTION ON DELETE RESTRICT,
     CONSTRAINT unique_assembly_seq UNIQUE (assembly, seq)
 );
 ALTER TABLE public.boms

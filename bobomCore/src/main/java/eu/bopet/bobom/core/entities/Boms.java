@@ -5,7 +5,15 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -22,11 +30,7 @@ import java.util.Objects;
         @NamedQuery(name = "Boms.findAll", query = "SELECT b FROM Boms b"),
         @NamedQuery(name = "Boms.findById", query = "SELECT b FROM Boms b WHERE b.id = :id"),
         @NamedQuery(name = "Boms.findByAssembly", query = "SELECT b FROM Boms b WHERE b.assembly = :assembly"),
-        @NamedQuery(name = "Boms.findByComponent", query = "SELECT b FROM Boms b WHERE b.component = :component"),
-        @NamedQuery(name = "Boms.findByPosition", query = "SELECT b FROM Boms b "
-                + "WHERE b.assembly = ?1 AND b.seq = ?2"),
-        @NamedQuery(name = "Boms.findByFields", query = "SELECT b FROM Boms b "
-                + "WHERE b.assembly = ?1 AND b.component = ?2 AND b.seq = ?3 AND b.quantity <= ?4 AND b.quantity >= ?5")})
+        @NamedQuery(name = "Boms.findByComponent", query = "SELECT b FROM Boms b WHERE b.component = :component")})
 public class Boms extends DBEntities implements Serializable {
 
     @Basic(optional = false)
@@ -51,20 +55,26 @@ public class Boms extends DBEntities implements Serializable {
     private Items component;
     @Transient
     private ObjectProperty<Items> componentP;
+    @JoinColumn(name = "unit", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false)
+    private Units unit;
+    @Transient
+    private ObjectProperty<Units> unitP;
 
     public Boms() {
     }
 
-    public Boms(Object[] fields) {
+    public Boms(Object[] fields){
         updateFields(fields);
     }
 
     @Override
     public void updateFields(Object[] fields) {
-        setSeq((int) fields[0]);
+        setSeq((Integer) fields[0]);
         setQuantity((BigDecimal) fields[1]);
         setAssembly((Items) fields[2]);
         setComponent((Items) fields[3]);
+        setUnit((Units) fields[4]);
     }
 
     public int getSeq() {
@@ -139,37 +149,50 @@ public class Boms extends DBEntities implements Serializable {
         return componentP;
     }
 
+    public Units getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Units unit) {
+        this.unit = unit;
+        if (this.unitP != null) {
+            unitP.setValue(this.unit);
+        }
+    }
+
+    public ObjectProperty<Units> unitPProperty() {
+        if (unitP == null) {
+            unitP = new SimpleObjectProperty<>(unit);
+        }
+        return unitP;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Boms)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Boms boms = (Boms) o;
-        return seq == boms.seq
-                && quantity.equals(boms.quantity)
-                && assembly.equals(boms.assembly)
-                && component.equals(boms.component);
+        return seq == boms.seq &&
+                quantity.equals(boms.quantity) &&
+                assembly.equals(boms.assembly) &&
+                component.equals(boms.component) &&
+                unit.equals(boms.unit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), seq, quantity, assembly, component);
+        return Objects.hash(super.hashCode(), seq, quantity, assembly, component, unit);
     }
 
     @Override
     public String toString() {
-        return "Boms{"
-                + "id=" + getId()
-                + ", assembly=" + assembly
-                + ", seq=" + seq
-                + ", component=" + component
-                + ", quantity=" + quantity
-                + '}';
+        return "Boms{" +
+                "assembly=" + assembly +
+                ", seq=" + seq +
+                ", quantity=" + quantity +
+                ", unit=" + unit +
+                ", component=" + component +
+                '}';
     }
 }
